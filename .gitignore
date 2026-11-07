@@ -1,0 +1,7 @@
+data/wav/
+data/new_recordings/*
+!data/new_recordings/README.md
+db/voice.db
+__pycache__/
+*.pyc
+.venv/

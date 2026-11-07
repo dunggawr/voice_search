@@ -1,0 +1,13 @@
+numpy
+pandas
+scipy
+matplotlib
+librosa
+soundfile
+pyloudnorm
+praat-parselmouth
+# Tuyen A (embedding) them:
+torch
+speechbrain
+# Demo:
+streamlit
