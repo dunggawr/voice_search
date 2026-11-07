@@ -39,9 +39,9 @@ Sau lệnh trên `db/voice.db` có 1000 file, 84 speaker; các bảng `feat_*` v
 
 | Người | Bộ đặc trưng | Bảng ghi vào | Module |
 |---|---|---|---|
-| A | Speaker embedding (192 chiều, ECAPA-TDNN) | `feat_embedding` | `tracks/track_a_embedding.py` |
+| A | Phổ (46 cột) | `feat_spectral` | `tracks/track_c_spectral.py` |
 | B | Prosodic (11 cột) | `feat_prosodic` | `tracks/track_b_prosodic.py` |
-| C | Phổ (46 cột) | `feat_spectral` | `tracks/track_c_spectral.py` |
+| C | Speaker embedding (192 chiều, ECAPA-TDNN) | `feat_embedding` | `tracks/track_a_embedding.py` |
 
 Mỗi người chỉ ghi vào bảng của mình. Dữ liệu giai đoạn 1 nạp nguyên từ CSV đã nộp (`features_embedding.csv`, `features_prosodic.csv`, `features_spectral.csv`), cột khớp tên trong `schema.sql`.
 
