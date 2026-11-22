@@ -6,6 +6,7 @@ librosa
 soundfile
 pyloudnorm
 praat-parselmouth
+psycopg2-binary
 # Tuyen A (embedding) them:
 torch
 speechbrain

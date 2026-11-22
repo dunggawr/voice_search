@@ -6,12 +6,14 @@ Gói này là "hợp đồng chung" của nhóm cho Yêu cầu 3, 4, 5. **Không
 
 ```
 voice_search/
-  schema.sql               hợp đồng CSDL (SQLite)
-  init_db.py               tạo db/voice.db + nạp bảng speakers, audio_files
+  docker-compose.yml       chạy PostgreSQL 16 (database voice_search)
+  schema.sql               hợp đồng CSDL PostgreSQL (schema "voice")
+  init_db.py               tạo schema + nạp bảng speakers, audio_files
+  sql/examples.sql         câu SQL mẫu cho việc T2
   make_query_set.py        đã chạy sẵn, ra data/query_set.csv (không chạy lại)
   common/
     preprocess.py          chuẩn hoá FILE MỚI (16 kHz mono, cắt lặng top_db=25, -23 LUFS)
-    db.py                  đọc/ghi voice.db (load_matrix, norm_params, lưu embedding)
+    db.py                  đọc/ghi PostgreSQL (load_matrix, norm_params, lưu embedding)
     evaluate.py            khung chấm điểm chung (top1, P@5, MAP@5, group@5, lang@5)
   tracks/
     _template.py           mẫu module cho mỗi tuyến
@@ -20,20 +22,26 @@ voice_search/
     query_set.csv          50 truy vấn cố định (30 test, 20 dev)
     wav/                   (tự giải nén 1000 file A_0001.wav ... A_1000.wav vào đây; không đưa lên git)
     new_recordings/        file mới tự thu bằng điện thoại (xem README trong thư mục)
-  db/voice.db              (sinh ra bởi init_db.py; không đưa lên git)
   app/                     ứng dụng demo (Streamlit)
   report/                  bảng và hình cho báo cáo
 ```
 
 ## 2. Cài đặt và dựng CSDL (mỗi người làm 1 lần)
 
+Mỗi người chạy một PostgreSQL riêng trên máy mình (bằng Docker); khi ghép (giai đoạn 2B) chuyển bảng qua nhau bằng `pg_dump` (mục 6).
+
 ```
+docker compose up -d                     # PostgreSQL 16, database voice_search, cổng 5432
 pip install -r requirements.txt
 # giải nén 1000 file wav vào data/wav/
 python init_db.py data/metadata_master.csv data/wav
 ```
 
-Sau lệnh trên `db/voice.db` có 1000 file, 84 speaker; các bảng `feat_*` và `norm_params` còn trống: mỗi người tự nạp bảng của mình ở việc T2.
+- Kết nối mặc định: `postgresql://postgres:postgres@localhost:5432/voice_search`. Nếu PostgreSQL của bạn khác (đã cài sẵn, cổng khác), đặt biến môi trường `DATABASE_URL` (xem `.env.example`).
+- Không có Docker: cài PostgreSQL 14 trở lên, tạo database `voice_search` mã UTF-8 (`createdb -E UTF8 voice_search`), rồi đặt `DATABASE_URL`.
+- `init_db.py` chỉ tạo schema `voice`, không đụng schema `public`. Chạy lại khi schema đã có sẽ **dừng** để không mất dữ liệu; chỉ thêm `--reset` khi thật sự muốn xoá làm lại.
+
+Sau lệnh trên schema `voice` có 1000 file, 84 speaker; các bảng `feat_*` và `norm_params` còn trống: mỗi người tự nạp bảng của mình ở việc T2 (nạp dữ liệu giai đoạn 1 từ CSV rồi `conn.commit()`). Thử `psql "$DATABASE_URL" -f sql/examples.sql`.
 
 ## 3. Phân tuyến
 
@@ -47,7 +55,7 @@ Mỗi người chỉ ghi vào bảng của mình. Dữ liệu giai đoạn 1 n�
 
 ## 4. Hợp đồng
 
-**CSDL.** Xem `schema.sql`. Embedding lưu `float32` little-endian dạng BLOB (192 × 4 byte) bằng `db.save_embedding`. `norm_params` lưu trung bình và độ lệch chuẩn từng cột tính trên 1000 file (`db.save_norm_params`); tìm kiếm z-score bằng đúng các tham số này.
+**CSDL.** PostgreSQL, schema `voice`, xem `schema.sql`. Dùng `db.connect()` (đã đặt sẵn `search_path` và mã UTF-8). Embedding lưu thành mảng `REAL[]` đúng 192 phần tử (không cần cài thêm extension) bằng `db.save_embedding`; nhớ `conn.commit()` sau khi ghi. `norm_params` lưu trung bình và độ lệch chuẩn từng cột tính trên 1000 file (`db.save_norm_params`); tìm kiếm z-score bằng đúng các tham số này.
 
 **Mỗi module tuyến có 3 hàm** (xem `tracks/_template.py`):
 
@@ -77,7 +85,7 @@ Mỗi người chỉ ghi vào bảng của mình. Dữ liệu giai đoạn 1 n�
 - group@5 (cùng vùng/accent) và lang@5 chỉ là kiểm tra thô cho speaker chưa có. Embedding học danh tính giọng, không học accent, nên group@5 giữa UK và US có thể thấp mà vẫn tốt. Đánh giá chính cho nhóm này là nghe thử.
 - Mỗi nhóm truy vấn chỉ 10 đến 20 câu, nên số liệu dao động mạnh; báo cáo kèm số lượng.
 
-**Git.** Mỗi người một nhánh (`track-a`, `track-b`, `track-c`), gộp vào `main` qua pull request để người khác xem. Không commit `data/wav/` và `db/voice.db`.
+**Git.** Mỗi người một nhánh (`track-a`, `track-b`, `track-c`), gộp vào `main` qua pull request để người khác xem. Không commit `data/wav/` và file `.env`.
 
 ## 5. Việc của mỗi tuyến (T1 đến T6)
 
@@ -94,3 +102,16 @@ Mỗi người chỉ ghi vào bảng của mình. Dữ liệu giai đoạn 1 n�
 - B: hợp nhất điểm 3 bộ (`search_fused`), chọn trọng số **trên `dev`**. Kiểm tra tuyến C.
 - C: đánh giá tổng, ứng dụng demo hoàn chỉnh, kịch bản demo. Kiểm tra tuyến A.
 - Kiểm tra chéo: chạy code người kia từ đầu trên máy mình, so với báo cáo, ghi lỗi.
+
+### Chuyển bảng giữa các máy (làm ở 2B)
+
+Mỗi người xuất bảng của mình, A nạp vào CSDL của A (bảng đích đã có sẵn và trống nhờ `init_db.py`; mỗi người chỉ ghi `norm_params` của bộ mình nên không trùng khoá):
+
+```
+# máy của B (xuất)
+pg_dump -h localhost -U postgres -d voice_search --data-only -t voice.feat_prosodic -t voice.norm_params > b_prosodic.sql
+# máy của A (nạp)
+psql -h localhost -U postgres -d voice_search -f b_prosodic.sql
+```
+
+C làm tương tự với `voice.feat_spectral`. Sau khi nạp đủ, chạy câu số 6 trong `sql/examples.sql`: kết quả phải là 0 dòng.

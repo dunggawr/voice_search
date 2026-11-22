@@ -1,0 +1,16 @@
+# Chay PostgreSQL cho nhom:  docker compose up -d
+# Du lieu giu trong volume "pgdata" (docker compose down khong xoa; them -v moi xoa).
+services:
+  db:
+    image: postgres:16
+    container_name: voice_search_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: voice_search
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
