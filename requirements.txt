@@ -7,7 +7,7 @@ soundfile
 pyloudnorm
 praat-parselmouth
 psycopg2-binary
-# Tuyen A (embedding) them:
+# Tuyen C (embedding) them:
 torch
 speechbrain
 # Demo:

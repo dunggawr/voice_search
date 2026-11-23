@@ -1,5 +1,5 @@
 -- schema.sql: hop dong CSDL chung cua nhom (PostgreSQL 14 tro len). KHONG tu y doi ten bang/cot.
--- Moi tuyen chi GHI vao bang cua minh: A -> feat_embedding, B -> feat_prosodic, C -> feat_spectral.
+-- Moi tuyen chi GHI vao bang cua minh: A -> feat_spectral, B -> feat_prosodic, C -> feat_embedding.
 -- Toan bo bang nam trong schema "voice" (khong dung vao schema public). init_db.py chay file nay.
 CREATE SCHEMA voice;
 SET search_path TO voice;

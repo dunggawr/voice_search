@@ -23,7 +23,7 @@ voice_search/
     wav/                   (tự giải nén 1000 file A_0001.wav ... A_1000.wav vào đây; không đưa lên git)
     new_recordings/        file mới tự thu bằng điện thoại (xem README trong thư mục)
   app/                     ứng dụng demo (Streamlit)
-  report/                  bảng và hình cho báo cáo
+  report/                  bảng và hình cho báo cáo (chia theo A/, B/, C/)
 ```
 
 ## 2. Cài đặt và dựng CSDL (mỗi người làm 1 lần)
@@ -114,4 +114,4 @@ pg_dump -h localhost -U postgres -d voice_search --data-only -t voice.feat_proso
 psql -h localhost -U postgres -d voice_search -f b_prosodic.sql
 ```
 
-C làm tương tự với `voice.feat_spectral`. Sau khi nạp đủ, chạy câu số 6 trong `sql/examples.sql`: kết quả phải là 0 dòng.
+C làm tương tự với `voice.feat_embedding`. Sau khi nạp đủ, chạy câu số 6 trong `sql/examples.sql`: kết quả phải là 0 dòng.

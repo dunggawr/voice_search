@@ -5,7 +5,7 @@ import numpy as np
 from common import db
 from common.preprocess import preprocess
 
-FEATURE_SET = "prosodic"        # prosodic (B) | spectral (C) | embedding (A)
+FEATURE_SET = "prosodic"        # prosodic (B) | spectral (A) | embedding (C)
 
 
 def extract(wav_path):
