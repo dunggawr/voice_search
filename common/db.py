@@ -49,11 +49,15 @@ def load_matrix(conn, feature_set):
         if feature_set == "embedding":
             cur.execute(f"SELECT file_id, vector FROM {table} ORDER BY file_id")
             rows = cur.fetchall()
+            if not rows:
+                return np.array([], dtype=object), np.empty((0, 192), dtype=np.float64)
             ids = np.array([r[0] for r in rows], dtype=object)
             return ids, np.array([r[1] for r in rows], dtype=np.float64)
         cols = feature_names(conn, feature_set)
         cur.execute(f"SELECT file_id, {', '.join(cols)} FROM {table} ORDER BY file_id")
         rows = cur.fetchall()
+        if not rows:
+            return np.array([], dtype=object), np.empty((0, len(cols)), dtype=np.float64)
     ids = np.array([r[0] for r in rows], dtype=object)
     return ids, np.array([r[1:] for r in rows], dtype=np.float64)
 
@@ -78,6 +82,8 @@ def save_norm_params(conn, feature_set, names, M):
 
 def load_norm_params(conn, feature_set):
     """Tra ve (mean, std) theo thu tu cot cua bang."""
+    if feature_set == "embedding":
+        raise ValueError("Tuyen embedding khong dung norm_params (z-score), dung cosine similarity.")
     names = feature_names(conn, feature_set)
     with conn.cursor() as cur:
         cur.execute("SELECT feature_name, mean, std FROM norm_params WHERE feature_set=%s", (feature_set,))
