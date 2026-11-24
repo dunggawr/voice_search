@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from common import db
 from tracks.track_c_spectral import FEATURE_SET, extract, load_matrix, search
 
-OUTPUT = Path("report/spectral")
+OUTPUT = Path("report/A")
 
 
 def run_query(query, wav_dir, ids, matrix, meta, names, norm_params):

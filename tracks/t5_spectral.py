@@ -9,7 +9,7 @@ from common import db
 from common.evaluate import evaluate, summarize
 from tracks.track_c_spectral import FEATURE_SET, extract, load_matrix, search
 
-OUTPUT = Path("report/spectral")
+OUTPUT = Path("report/A")
 
 
 def main():

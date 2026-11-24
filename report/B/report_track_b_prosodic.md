@@ -80,7 +80,7 @@ Chạy `track_b_prosodic` với độ đo `mahalanobis` ([eval_track_b_prosodic_
 
 Module: [tracks/fusion.py](file:///home/dunggawr/Documents/voice_search_buoc0/voice_search/tracks/fusion.py).
 
-- **Chuẩn hoá thang điểm:** Cả 3 tuyến đưa về `similarity ∈ [0, 1]` (Prosodic: Mahalanobis `1/(1+d)`; Spectral: z-score + Cosine `(cos+1)/2`; Embedding: Cosine `(cos+1)/2`).
+- **Chuẩn hoá thang điểm:** Cả 3 tuyến đưa về `similarity ∈ [0, 1]` (Prosodic: Mahalanobis `1/(1+d)`; Spectral: z-score + Cosine `1/(1+d)` khớp với `tracks/track_c_spectral.py`; Embedding: Cosine `(cos+1)/2` khớp với `tracks/track_a_embedding.py`).
 - **Chọn trọng số trên `dev`:** Grid search bước `0.05` ([eval_fusion_weights_dev.csv](file:///home/dunggawr/Documents/voice_search_buoc0/voice_search/report/B/eval_fusion_weights_dev.csv)) chọn **`w_prosodic = 0.05`, `w_spectral = 0.15`, `w_embedding = 0.80`**.
 - **Bảng so sánh 4 hệ thống ([eval_fusion_comparison.csv](file:///home/dunggawr/Documents/voice_search_buoc0/voice_search/report/B/eval_fusion_comparison.csv), [fig_2b_fusion_comparison.png](file:///home/dunggawr/Documents/voice_search_buoc0/voice_search/report/B/fig_2b_fusion_comparison.png)):**
 
@@ -93,6 +93,6 @@ Module: [tracks/fusion.py](file:///home/dunggawr/Documents/voice_search_buoc0/vo
 | `test` | Prosodic (B) | 0.250 | 0.180 | 0.1670 | 0.800 | 0.940 |
 | `test` | Spectral (A) | 0.600 | 0.430 | 0.3675 | 0.980 | 0.980 |
 | `test` | Embedding (C) | 1.000 | 1.000 | 1.0000 | 0.820 | 0.980 |
-| `test` | **Fused (0.05/0.15/0.80)** | **1.000** | **0.990** | **0.9900** | **0.980** | **1.000** |
+| `test` | **Fused (0.05/0.15/0.80)** | **1.000** | **1.000** | **1.0000** | **0.960** | **1.000** |
 
-**Nhận xét 2B:** Kết hợp trọng số nhỏ từ Prosodic (`0.05`) và Spectral (`0.15`) với Embedding (`0.80`) giữ nguyên `Top-1 = 1.000` cho `seen` trên cả `dev` và `test`, đồng thời nâng rõ rệt `unseen group@5` từ `0.820` lên `0.980` và `unseen lang@5` từ `0.980` lên `1.000` (bù đúng điểm yếu "embedding ít giữ thông tin vùng/accent giữa UK và US" đã dự báo ở Bước 0).
+**Nhận xét 2B:** Kết hợp trọng số nhỏ từ Prosodic (`0.05`) và Spectral (`0.15`) với Embedding (`0.80`) giữ nguyên **tuyệt đối** `Top-1 = 1.000`, `P@5 = 1.000`, `MAP@5 = 1.0000` cho `seen` trên `test`, đồng thời nâng rõ rệt `unseen group@5` từ `0.820` lên `0.960` và `unseen lang@5` từ `0.980` lên `1.000` (bù đúng điểm yếu "embedding ít giữ thông tin vùng/accent giữa UK và US" đã dự báo ở Bước 0).

@@ -1,7 +1,7 @@
 """T4 - Minh hoa 2 truy van: 1 seen (Q41) va 1 unseen (Q11).
 
-Chay: python -m report.t4_demo_queries
-Ket qua: in bang xep hang va luu bieu do report/t4_seen.png, report/t4_unseen.png
+Chay: python -m report.C.t4_demo_queries
+Ket qua: in bang xep hang va luu bieu do report/C/t4_seen.png, report/C/t4_unseen.png
 """
 import numpy as np
 import pandas as pd
@@ -80,7 +80,7 @@ def run_query(q_row, label):
         ax.text(bar.get_width() + 0.01, bar.get_y() + bar.get_height()/2,
                 f"{val:.4f}", va="center", fontsize=9)
     plt.tight_layout()
-    out_path = f"report/t4_{kind}.png"
+    out_path = f"report/C/t4_{kind}.png"
     plt.savefig(out_path, dpi=120)
     plt.close()
     print(f"\n  Bieu do da luu: {out_path}")

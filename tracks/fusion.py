@@ -115,7 +115,8 @@ def score_single_modality(feature_set, qvec, M, metric=None, mean=None, std=None
         Mn = np.linalg.norm(ZM, axis=1)
         cos = np.clip((ZM @ zq) / np.maximum(qn * Mn, 1e-12), -1.0, 1.0)
         dists = 1.0 - cos
-        sims = np.clip((cos + 1.0) / 2.0, 0.0, 1.0)
+        # Spectral (A) dung 1/(1+d), Embedding (C) dung (cos+1)/2
+        sims = 1.0 / (1.0 + dists) if feature_set == "spectral" else np.clip((cos + 1.0) / 2.0, 0.0, 1.0)
     elif metric == "euclidean":
         dists = np.linalg.norm(ZM - zq, axis=1)
         sims = 1.0 / (1.0 + dists)
@@ -229,7 +230,6 @@ def grid_search_weights_dev(ids, matrices, norm_params, meta, queries, metrics, 
 
 
 def run_fusion_benchmark(from_db=False, dsn=None):
-    os.makedirs("report", exist_ok=True)
     os.makedirs("report/B", exist_ok=True)
     if from_db:
         conn = db.connect(dsn)
@@ -246,7 +246,6 @@ def run_fusion_benchmark(from_db=False, dsn=None):
     metrics = dict(DEFAULT_METRICS)
 
     grid_df = grid_search_weights_dev(ids, matrices, norm_params, meta, queries, metrics, step=0.05)
-    grid_df.to_csv("report/eval_fusion_weights_dev.csv", index=False)
     grid_df.to_csv("report/B/eval_fusion_weights_dev.csv", index=False)
 
     # Chon bo trong so co ca 3 tuyen dong gop tot nhat, dong thoi in top-5 grid
@@ -295,7 +294,6 @@ def run_fusion_benchmark(from_db=False, dsn=None):
         })
 
     comp_df = pd.DataFrame(comp_rows)
-    comp_df.to_csv("report/eval_fusion_comparison.csv", index=False)
     comp_df.to_csv("report/B/eval_fusion_comparison.csv", index=False)
     print("\n=== 2B: So sanh 4 he thong tren DEV va TEST ===")
     print(comp_df.round(4).to_string(index=False))
@@ -322,7 +320,6 @@ def run_fusion_benchmark(from_db=False, dsn=None):
         ax.text(idx, row.seen_p5 + 0.02, f"{row.seen_p5:.2f}", ha="center", fontsize=8)
         ax.text(idx + w, row.seen_map5 + 0.02, f"{row.seen_map5:.2f}", ha="center", fontsize=8)
     fig.tight_layout()
-    fig.savefig("report/fig_2b_fusion_comparison.png", dpi=160)
     fig.savefig("report/B/fig_2b_fusion_comparison.png", dpi=160)
     plt.close(fig)
     return best_weights, comp_df

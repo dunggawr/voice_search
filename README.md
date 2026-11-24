@@ -98,20 +98,23 @@ Mỗi người chỉ ghi vào bảng của mình. Dữ liệu giai đoạn 1 n�
 
 ## 6. Giai đoạn 2B (sau khi xong T1 đến T6)
 
-- A: sơ đồ khối, quy trình truy vấn, ghép 3 bảng, mục báo cáo về CSDL. Kiểm tra tuyến B.
-- B: hợp nhất điểm 3 bộ (`search_fused`), chọn trọng số **trên `dev`**. Kiểm tra tuyến C.
-- C: đánh giá tổng, ứng dụng demo hoàn chỉnh, kịch bản demo. Kiểm tra tuyến A.
+- C: sơ đồ khối và mô tả module, quy trình truy vấn (Yêu cầu 4a); ghép 3 bảng đặc trưng vào một CSDL chung, viết mục báo cáo về CSDL (Yêu cầu 3). Kiểm tra tuyến B (prosodic).
+- B: hợp nhất điểm 3 bộ (`search_fused`), chọn trọng số **trên `dev`**. Kiểm tra tuyến A (phổ).
+- A: đánh giá hệ thống cuối so với từng bộ riêng, ứng dụng demo hoàn chỉnh (ghép 3 tab thành một giao diện), kịch bản demo. Kiểm tra tuyến C (embedding).
 - Kiểm tra chéo: chạy code người kia từ đầu trên máy mình, so với báo cáo, ghi lỗi.
 
 ### Chuyển bảng giữa các máy (làm ở 2B)
 
-Mỗi người xuất bảng của mình, A nạp vào CSDL của A (bảng đích đã có sẵn và trống nhờ `init_db.py`; mỗi người chỉ ghi `norm_params` của bộ mình nên không trùng khoá):
+Mỗi người xuất bảng của mình, C nạp vào CSDL chung của C (bảng đích đã có sẵn và trống nhờ `init_db.py`; mỗi người chỉ ghi `norm_params` của bộ mình nên không trùng khoá):
 
 ```
 # máy của B (xuất)
 pg_dump -h localhost -U postgres -d voice_search --data-only -t voice.feat_prosodic -t voice.norm_params > b_prosodic.sql
-# máy của A (nạp)
+# máy của A (xuất)
+pg_dump -h localhost -U postgres -d voice_search --data-only -t voice.feat_spectral -t voice.norm_params > a_spectral.sql
+# máy của C (nạp)
 psql -h localhost -U postgres -d voice_search -f b_prosodic.sql
+psql -h localhost -U postgres -d voice_search -f a_spectral.sql
 ```
 
-C làm tương tự với `voice.feat_embedding`. Sau khi nạp đủ, chạy câu số 6 trong `sql/examples.sql`: kết quả phải là 0 dòng.
+Sau khi nạp đủ 3 bảng, chạy câu số 6 trong `sql/examples.sql`: kết quả phải là 0 dòng.

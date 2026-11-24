@@ -39,7 +39,7 @@ def main():
     summary = pd.DataFrame(rows).sort_values(
         ["p5", "map5", "top1"], ascending=False
     )
-    output = Path("report/spectral/t3_metrics_dev.csv")
+    output = Path("report/A/t3_metrics_dev.csv")
     output.parent.mkdir(parents=True, exist_ok=True)
     summary.to_csv(output, index=False, float_format="%.6f")
     print(summary.round(4).to_string(index=False))
