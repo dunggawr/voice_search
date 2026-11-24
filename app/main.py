@@ -24,12 +24,19 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 with tab1:
-    from app.tab_embedding import render
-    render()
+    from psycopg2 import Error as DatabaseError
+
+    try:
+        from app.tab_embedding import render as render_embedding
+
+        render_embedding()
+    except (ImportError, OSError, RuntimeError, DatabaseError) as exc:
+        st.warning(f"Tab Embedding chưa sẵn sàng: {exc}")
 
 with tab2:
-    st.header("📊 Spectral — MFCC + Formant + LPC")
-    st.info("Chua co — cho thanh vien A (track_c_spectral.py) hoan thanh T6 cua ho.")
+    from app.tab_spectral import render as render_spectral
+
+    render_spectral()
 
 with tab3:
     st.header("🎵 Prosodic — F0, Energy, Jitter, Shimmer")
