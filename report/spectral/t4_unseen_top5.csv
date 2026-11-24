@@ -1,0 +1,6 @@
+rank,file_id,similarity,distance,speaker_id,region_accent,language,same_speaker,same_region
+1,A_0828,0.831224,0.203045,SPK_VIVOSDEV05,Nam,vi,False,True
+2,A_0818,0.786734,0.271078,SPK_VIVOSDEV05,Nam,vi,False,True
+3,A_0810,0.771819,0.295641,SPK_VIVOSDEV05,Nam,vi,False,True
+4,A_0804,0.770173,0.298410,SPK_VIVOSDEV05,Nam,vi,False,True
+5,A_0806,0.766619,0.304429,SPK_VIVOSDEV05,Nam,vi,False,True

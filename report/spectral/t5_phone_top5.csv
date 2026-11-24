@@ -1,0 +1,11 @@
+query_file,rank,file_id,similarity,distance,speaker_id,region_accent,language
+new_A_1.wav,1,A_0040,0.696619,0.435505,SPK_MCAE0,US,en
+new_A_1.wav,2,A_0620,0.695127,0.438587,SPK_p345,UK,en
+new_A_1.wav,3,A_0544,0.690791,0.447616,SPK_p287,UK,en
+new_A_1.wav,4,A_0036,0.678379,0.474102,SPK_MCAE0,US,en
+new_A_1.wav,5,A_0019,0.677934,0.475069,SPK_MAJP0,US,en
+new_A_2.wav,1,A_0544,0.679586,0.471483,SPK_p287,UK,en
+new_A_2.wav,2,A_0876,0.678186,0.474523,SPK_VIVOSDEV07,Nam,vi
+new_A_2.wav,3,A_0040,0.666909,0.499456,SPK_MCAE0,US,en
+new_A_2.wav,4,A_0036,0.652894,0.531641,SPK_MCAE0,US,en
+new_A_2.wav,5,A_0620,0.651811,0.534186,SPK_p345,UK,en
