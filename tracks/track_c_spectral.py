@@ -69,5 +69,40 @@ def load_matrix(conn):
     return db.load_matrix(conn, FEATURE_SET)
 
 
-def search(qvec, ids, M, k=5):
-    raise NotImplementedError  # Làm ở T3.
+def search(qvec, ids, M, k=5, *, metric="cosine", norm_params=None):
+    """Trả về top k bộ (file_id, similarity, distance)."""
+    if len(ids) == 0 or k <= 0:
+        return []
+
+    if norm_params is None:
+        from contextlib import closing
+        from common import db
+
+        with closing(db.connect()) as conn:
+            norm_params = db.load_norm_params(conn, FEATURE_SET)
+
+    mean, std = norm_params
+    Z = (M - mean) / std
+    q = (qvec - mean) / std
+
+    if metric == "euclidean":
+        distance = np.linalg.norm(Z - q, axis=1)
+
+    elif metric == "cosine":
+        norms = np.linalg.norm(Z, axis=1) * np.linalg.norm(q)
+        cosine = np.divide(Z @ q, norms, out=np.zeros(len(Z)), where=norms > 0)
+        distance = 1.0 - np.clip(cosine, -1.0, 1.0)
+
+    elif metric == "mahalanobis":
+        centered = Z - Z.mean(axis=0)
+        covariance = centered.T @ centered / max(len(Z) - 1, 1)
+        adjusted = covariance + 1e-6 * np.eye(Z.shape[1])
+        L = np.linalg.cholesky(adjusted)
+        distance = np.linalg.norm(np.linalg.solve(L, (Z - q).T), axis=0)
+
+    else:
+        raise ValueError(f"Độ đo không hợp lệ: {metric}")
+
+    similarity = 1.0 / (1.0 + distance)
+    top = np.argsort(distance, kind="stable")[:k]
+    return [(str(ids[i]), float(similarity[i]), float(distance[i])) for i in top]
