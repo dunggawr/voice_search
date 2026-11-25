@@ -161,8 +161,8 @@ def run_t4(ids, M, meta, queries, best_metric):
     interm_json = {}
 
     specs = [
-        ("Q21", "report/B/fig_t4_prosodic_seen_compare.png", "T4 Minh hoa SEEN (Q21 - A_0744, SPK_VIVOSDEV03, Nam)"),
-        ("Q01", "report/B/fig_t4_prosodic_unseen_compare.png", "T4 Minh hoa UNSEEN (Q01 - A_0652, SPK_VIVOSDEV01, Nam)"),
+        ("Q21", "report/B/fig_t4_prosodic_seen_compare.png", "Bộ Prosodic — Minh họa truy vấn SEEN (Q21 - A_0744, SPK_VIVOSDEV03, Nam)"),
+        ("Q01", "report/B/fig_t4_prosodic_unseen_compare.png", "Bộ Prosodic — Minh họa truy vấn UNSEEN (Q01 - A_0652, SPK_VIVOSDEV01, Nam)"),
     ]
     for qid, png_path, title in specs:
         q_row = queries[queries.query_id == qid].iloc[0]

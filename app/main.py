@@ -20,7 +20,7 @@ if ROOT in sys.path:
 sys.path.insert(0, ROOT)
 
 st.set_page_config(
-    page_title="Voice Search Demo",
+    page_title="Tìm kiếm giọng nói",
     page_icon="🔊",
     layout="wide",
 )
@@ -38,10 +38,10 @@ def _try_connect():
 conn = _try_connect()
 
 tab1, tab2, tab3, tab4 = st.tabs([
-    "🧠 Embedding (C)",
-    "📊 Spectral (A)",
-    "🎵 Prosodic (B)",
-    "🔀 Fused",
+    "🧠 Embedding",
+    "📊 Phổ (Spectral)",
+    "🎵 Prosodic",
+    "🔀 Hợp nhất",
 ])
 
 with tab1:
@@ -67,19 +67,19 @@ with tab3:
 with tab4:
     from tracks import fusion
 
-    st.header("🔀 Fused — Hop nhat 3 bo dac trung")
+    st.header("🔀 Hợp nhất 3 bộ đặc trưng")
     comp_path = os.path.join(ROOT, "report", "B", "eval_fusion_comparison.csv")
     fig_path = os.path.join(ROOT, "report", "B", "fig_2b_fusion_comparison.png")
     if os.path.exists(comp_path):
-        st.subheader("So sanh 4 he thong tren dev & test")
+        st.subheader("So sánh 4 hệ thống trên tập dev & test")
         st.dataframe(pd.read_csv(comp_path), use_container_width=True, hide_index=True)
     if os.path.exists(fig_path):
-        st.image(fig_path, caption="So sanh 3 tuyen don le va he thong hop nhat (tap TEST)")
+        st.image(fig_path, caption="So sánh 3 bộ đặc trưng đơn lẻ và hệ thống hợp nhất (tập TEST)")
 
-    st.subheader("Thu tim kiem hop nhat tren tap 1000 file")
+    st.subheader("Thử tìm kiếm hợp nhất trên tập 1.000 file")
     ids_f, matrices_f, norms_f = fusion.load_all_from_csv()
     meta_f = pd.read_csv(os.path.join(ROOT, "data", "metadata_master.csv")).set_index("file_id")
-    sample_id = st.selectbox("Chon file truy van mau", ids_f.tolist(), index=0, key="fused_sample_id")
+    sample_id = st.selectbox("Chọn file truy vấn mẫu", ids_f.tolist(), index=0, key="fused_sample_id")
     q_wav = os.path.join(ROOT, "data", "wav", f"{sample_id}.wav")
     if os.path.exists(q_wav):
         st.audio(q_wav)
@@ -94,13 +94,13 @@ with tab4:
     for rank, (fid, sim, dist) in enumerate(res_f, start=1):
         m = meta_f.loc[fid]
         rows.append({
-            "Hang": rank,
+            "Hạng": rank,
             "file_id": fid,
             "speaker_id": m["speaker_id"],
-            "Vung/Accent": m["region_accent"],
-            "Ngon ngu": m["language"],
-            "Similarity": round(sim, 4),
-            "Distance": round(dist, 4),
+            "Vùng/Accent": m["region_accent"],
+            "Ngôn ngữ": m["language"],
+            "Độ tương đồng": round(sim, 4),
+            "Khoảng cách": round(dist, 4),
         })
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
     for rank, (fid, sim, _) in enumerate(res_f, start=1):

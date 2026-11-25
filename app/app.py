@@ -15,8 +15,8 @@ sys.path.insert(0, ROOT)
 from common import db
 from app.tab_b_prosodic import render_tab as render_prosodic_tab
 
-st.set_page_config(page_title="Voice Search — Track B & Fusion", layout="wide")
-st.title("He thong tim kiem giong noi nam — Tuyen B (Prosodic) & Hop nhat 2B")
+st.set_page_config(page_title="Tìm kiếm giọng nói — Prosodic & Hợp nhất", layout="wide")
+st.title("Hệ thống tìm kiếm giọng nói nam — Prosodic & Hợp nhất")
 
 
 @st.cache_resource
@@ -28,18 +28,18 @@ def _try_connect():
 
 
 conn = _try_connect()
-tab1, tab2 = st.tabs(["Tuyen B: Prosodic (11 chieu)", "Giai doan 2B: Hop nhat diem (Fusion)"])
+tab1, tab2 = st.tabs(["Prosodic (11 chiều)", "Hợp nhất điểm (Fusion)"])
 
 with tab1:
     render_prosodic_tab(conn)
 
 with tab2:
-    st.subheader("So sanh 3 tuyen don le va he thong hop nhat (search_fused)")
+    st.subheader("So sánh 3 bộ đặc trưng đơn lẻ và hệ thống hợp nhất (search_fused)")
     comp_path = os.path.join(ROOT, "report", "B", "eval_fusion_comparison.csv")
     fig_path = os.path.join(ROOT, "report", "B", "fig_2b_fusion_comparison.png")
     if os.path.exists(comp_path):
         st.dataframe(pd.read_csv(comp_path), use_container_width=True, hide_index=True)
     else:
-        st.info("Chua co file report/B/eval_fusion_comparison.csv. Hay chay: python -m tracks.fusion")
+        st.info("Chưa có file report/B/eval_fusion_comparison.csv. Hãy chạy: python -m tracks.fusion")
     if os.path.exists(fig_path):
-        st.image(fig_path, caption="So sanh 3 tuyen va he thong hop nhat tren tap TEST")
+        st.image(fig_path, caption="So sánh 3 bộ đặc trưng đơn lẻ và hệ thống hợp nhất trên tập TEST")

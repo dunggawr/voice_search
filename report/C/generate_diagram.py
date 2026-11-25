@@ -1,84 +1,116 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-fig, ax = plt.subplots(figsize=(14, 10), dpi=300)
-ax.set_xlim(0, 14)
-ax.set_ylim(0, 10)
+fig, ax = plt.subplots(figsize=(15, 10.5), dpi=300)
+ax.set_xlim(0, 15)
+ax.set_ylim(0, 10.5)
 ax.axis("off")
 
-# Styles
-box_style = dict(boxstyle="round,pad=0.5", linewidth=1.5)
+PAD = 0.2
 
-# 1. Input Layer
-p1 = patches.FancyBboxPatch((0.5, 7.8), 2.8, 1.4, boxstyle="round,pad=0.4", fc="#E3F2FD", ec="#1976D2", lw=2)
-ax.add_patch(p1)
-ax.text(1.9, 8.6, "1. File Truy Vấn (WAV Mới)\n- Upload Streamlit\n- File tự thu điện thoại", 
-        ha="center", va="center", fontsize=10, weight="bold", color="#0D47A1")
+def add_box(x, y, w, h, fc, ec, lw=1.8):
+    box = patches.FancyBboxPatch(
+        (x, y), w, h,
+        boxstyle=f"round,pad={PAD},rounding_size=0.25",
+        fc=fc, ec=ec, lw=lw,
+    )
+    ax.add_patch(box)
 
-# 2. Preprocess Layer
-p2 = patches.FancyBboxPatch((4.2, 7.8), 3.0, 1.4, boxstyle="round,pad=0.4", fc="#E8F5E9", ec="#388E3C", lw=2)
-ax.add_patch(p2)
-ax.text(5.7, 8.6, "2. Tiền Xử Lý (common.preprocess)\n- 16 kHz Mono\n- Cắt lặng (top_db=25)\n- Chuẩn hóa -23 LUFS", 
-        ha="center", va="center", fontsize=9.5, weight="bold", color="#1B5E20")
+# 1. Tang nhap lieu
+add_box(0.5, 8.2, 3.0, 1.4, fc="#E3F2FD", ec="#1976D2", lw=2)
+ax.text(
+    2.0, 8.9,
+    "1. File Truy Vấn (WAV Mới)\n- Tải lên từ giao diện\n- File tự thu / nguồn ngoài",
+    ha="center", va="center", fontsize=10, weight="bold", color="#0D47A1",
+)
 
-# 3. Feature Extraction Tracks (Parallel)
-# Track C (Embedding)
-p3c = patches.FancyBboxPatch((8.2, 8.4), 5.2, 1.2, boxstyle="round,pad=0.4", fc="#EDE7F6", ec="#5E35B1", lw=1.8)
-ax.add_patch(p3c)
-ax.text(10.8, 9.0, "Tuyến C (Embedding) — track_a_embedding.py\nECAPA-TDNN (192-d) | L2 Normalize (Cosine)", 
-        ha="center", va="center", fontsize=9, weight="bold", color="#311B92")
+# 2. Tang tien xu ly
+add_box(4.5, 8.2, 3.4, 1.4, fc="#E8F5E9", ec="#388E3C", lw=2)
+ax.text(
+    6.2, 8.9,
+    "2. Tiền Xử Lý (common.preprocess)\n- 16 kHz Mono\n- Cắt lặng (top_db=25)\n- Chuẩn hóa -23 LUFS",
+    ha="center", va="center", fontsize=9.5, weight="bold", color="#1B5E20",
+)
 
-# Track A (Spectral)
-p3a = patches.FancyBboxPatch((8.2, 6.9), 5.2, 1.2, boxstyle="round,pad=0.4", fc="#FFF3E0", ec="#E65100", lw=1.8)
-ax.add_patch(p3a)
-ax.text(10.8, 7.5, "Tuyến A (Spectral) — track_c_spectral.py\n46 đặc trưng phổ & MFCC | z-score chuẩn hóa", 
-        ha="center", va="center", fontsize=9, weight="bold", color="#BF360C")
+# 3. Tang trich rut dac trung (song song)
+add_box(9.0, 8.7, 5.4, 1.0, fc="#EDE7F6", ec="#5E35B1", lw=1.8)
+ax.text(
+    11.7, 9.2,
+    "Speaker Embedding — track_a_embedding.py\nECAPA-TDNN (192 chiều) | L2 Normalize (Cosine)",
+    ha="center", va="center", fontsize=9.2, weight="bold", color="#311B92",
+)
 
-# Track B (Prosodic)
-p3b = patches.FancyBboxPatch((8.2, 5.4), 5.2, 1.2, boxstyle="round,pad=0.4", fc="#FCE4EC", ec="#C2185B", lw=1.8)
-ax.add_patch(p3b)
-ax.text(10.8, 6.0, "Tuyến B (Prosodic) — track_b_prosodic.py\n11 đặc trưng F0/Energy/Quality | Mahalanobis / z-score", 
-        ha="center", va="center", fontsize=9, weight="bold", color="#880E4F")
+add_box(9.0, 7.0, 5.4, 1.0, fc="#FFF3E0", ec="#E65100", lw=1.8)
+ax.text(
+    11.7, 7.5,
+    "Đặc trưng Phổ (Spectral) — track_c_spectral.py\n46 đặc trưng phổ & MFCC | z-score + Cosine",
+    ha="center", va="center", fontsize=9.2, weight="bold", color="#BF360C",
+)
 
-# 4. Database Layer (PostgreSQL)
-p_db = patches.FancyBboxPatch((0.5, 4.0), 6.7, 2.8, boxstyle="round,pad=0.5", fc="#ECEFF1", ec="#455A64", lw=2)
-ax.add_patch(p_db)
-ax.text(3.85, 6.4, "CƠ SỞ DỮ LIỆU POSTGRESQL 16 (Schema 'voice')", 
-        ha="center", va="center", fontsize=11, weight="bold", color="#263238")
-ax.text(3.85, 5.2, "• metadata_master: speakers (84) & audio_files (1000)\n• feat_embedding (192-d REAL[]) — C\n• feat_spectral (46 cột float) — A\n• feat_prosodic (11 cột float) — B\n• norm_params: (mean, std) dùng cho z-score", 
-        ha="center", va="center", fontsize=9, color="#37474F")
+add_box(9.0, 5.3, 5.4, 1.0, fc="#FCE4EC", ec="#C2185B", lw=1.8)
+ax.text(
+    11.7, 5.8,
+    "Đặc trưng Prosodic — track_b_prosodic.py\n11 đặc trưng F0/Energy/Quality | z-score + Mahalanobis",
+    ha="center", va="center", fontsize=9.2, weight="bold", color="#880E4F",
+)
 
-# 5. Search & Fusion Layer
-p_fusion = patches.FancyBboxPatch((8.2, 2.5), 5.2, 2.2, boxstyle="round,pad=0.5", fc="#FFF9C4", ec="#FBC02D", lw=2)
-ax.add_patch(p_fusion)
-ax.text(10.8, 4.2, "HỆ THỐNG TÌM KIẾM & HỢP NHẤT (2B)\ntracks.fusion.search_fused()", 
-        ha="center", va="center", fontsize=10, weight="bold", color="#F57F17")
-ax.text(10.8, 3.2, "sim_fused = 0.80·sim_emb + 0.15·sim_spec + 0.05·sim_pros\ndist_fused = 1.0 - sim_fused\n(Tối ưu trọng số trên tập dev)", 
-        ha="center", va="center", fontsize=9, color="#573A08")
+# 4. Tang co so du lieu PostgreSQL
+add_box(0.5, 3.7, 7.4, 3.1, fc="#ECEFF1", ec="#455A64", lw=2)
+ax.text(
+    4.2, 6.3,
+    "CƠ SỞ DỮ LIỆU POSTGRESQL 16 (Schema 'voice')",
+    ha="center", va="center", fontsize=11, weight="bold", color="#263238",
+)
+ax.text(
+    4.2, 4.9,
+    "• speakers (84) & audio_files (1.000)\n"
+    "• feat_embedding (192 chiều REAL[])\n"
+    "• feat_spectral (46 cột DOUBLE PRECISION)\n"
+    "• feat_prosodic (11 cột DOUBLE PRECISION)\n"
+    "• norm_params (57 cặp mean, std dùng cho z-score)",
+    ha="center", va="center", fontsize=9.5, color="#37474F", linespacing=1.4,
+)
 
-# 6. Presentation / Demo App Layer
-p_ui = patches.FancyBboxPatch((1.5, 0.6), 11.0, 1.4, boxstyle="round,pad=0.4", fc="#E0F7FA", ec="#00838F", lw=2)
-ax.add_patch(p_ui)
-ax.text(7.0, 1.3, "ỨNG DỤNG DEMO STREAMLIT (app/main.py)\nTab 1: Embedding (C) | Tab 2: Spectral (A) | Tab 3: Prosodic (B) | Tab 4: Fused (A+B+C)\nTop-5 Kết Quả: File ID | Speaker | Vùng/Accent | Điểm Tương Đồng | Nghe Audio | Bar Chart", 
-        ha="center", va="center", fontsize=10, weight="bold", color="#006064")
+# 5. Tang tim kiem & hop nhat
+add_box(9.0, 2.6, 5.4, 1.8, fc="#FFF9C4", ec="#FBC02D", lw=2)
+ax.text(
+    11.7, 4.0,
+    "HỆ THỐNG TÌM KIẾM & HỢP NHẤT\ntracks.fusion.search_fused()",
+    ha="center", va="center", fontsize=10, weight="bold", color="#E65100",
+)
+ax.text(
+    11.7, 3.1,
+    "sim_fused = 0.80·sim_emb + 0.15·sim_spec + 0.05·sim_pros\n"
+    "dist_fused = 1.0 - sim_fused  |  Tối ưu trọng số trên tập dev",
+    ha="center", va="center", fontsize=9, color="#573A08", linespacing=1.35,
+)
 
-# Arrows
+# 6. Tang giao dien Streamlit
+add_box(0.5, 0.5, 13.9, 1.3, fc="#E0F7FA", ec="#00838F", lw=2)
+ax.text(
+    7.45, 1.15,
+    "ỨNG DỤNG DEMO STREAMLIT (app/main.py)\n"
+    "Tab 1: Embedding  |  Tab 2: Spectral  |  Tab 3: Prosodic  |  Tab 4: Hợp nhất\n"
+    "Top-5 Kết Quả: File ID  |  Speaker  |  Vùng/Accent  |  Điểm Tương Đồng  |  Nghe Audio  |  Biểu đồ",
+    ha="center", va="center", fontsize=10, weight="bold", color="#006064", linespacing=1.35,
+)
+
+# Mui ten noi dung mep ngoai cac khoi
 arrow = dict(arrowstyle="->", lw=1.8, color="#37474F")
 # 1 -> 2
-ax.annotate("", xy=(4.2, 8.5), xytext=(3.3, 8.5), arrowprops=arrow)
+ax.annotate("", xy=(4.3, 8.9), xytext=(3.7, 8.9), arrowprops=arrow)
 # 2 -> 3
-ax.annotate("", xy=(8.2, 9.0), xytext=(7.2, 8.8), arrowprops=arrow)
-ax.annotate("", xy=(8.2, 7.5), xytext=(7.2, 8.5), arrowprops=arrow)
-ax.annotate("", xy=(8.2, 6.0), xytext=(7.2, 8.2), arrowprops=arrow)
-
-# DB -> 3/Search
-ax.annotate("", xy=(8.2, 3.6), xytext=(7.2, 4.8), arrowprops=dict(arrowstyle="<->", lw=1.8, color="#455A64"))
+ax.annotate("", xy=(8.8, 9.2), xytext=(8.1, 9.1), arrowprops=arrow)
+ax.annotate("", xy=(8.8, 7.5), xytext=(8.1, 8.9), arrowprops=arrow)
+ax.annotate("", xy=(8.8, 5.8), xytext=(8.1, 8.6), arrowprops=arrow)
+# DB <-> Fusion
+ax.annotate("", xy=(8.8, 3.7), xytext=(8.1, 4.5), arrowprops=dict(arrowstyle="<->", lw=1.8, color="#455A64"))
 # 3 -> Fusion
-ax.annotate("", xy=(10.8, 4.7), xytext=(10.8, 5.4), arrowprops=arrow)
+ax.annotate("", xy=(11.7, 4.6), xytext=(11.7, 5.1), arrowprops=arrow)
 # Fusion -> UI
-ax.annotate("", xy=(10.8, 2.0), xytext=(10.8, 2.5), arrowprops=arrow)
-# Direct Track -> UI (for single tab demo)
-ax.annotate("", xy=(3.0, 2.0), xytext=(3.0, 4.0), arrowprops=arrow)
+ax.annotate("", xy=(11.7, 2.0), xytext=(11.7, 2.4), arrowprops=arrow)
+# DB -> UI
+ax.annotate("", xy=(4.2, 2.0), xytext=(4.2, 3.5), arrowprops=arrow)
 
 plt.tight_layout()
 plt.savefig("report/block_diagram.png", dpi=300, bbox_inches="tight")

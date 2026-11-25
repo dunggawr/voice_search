@@ -20,7 +20,7 @@ from tracks.track_a_embedding import load_matrix, search, extract
 # ---------------------------------------------------------------------------
 # Cache ket noi va ma tran (chi tai 1 lan)
 # ---------------------------------------------------------------------------
-@st.cache_resource(show_spinner="Dang tai ma tran embedding tu CSDL...")
+@st.cache_resource(show_spinner="Đang tải ma trận embedding từ CSDL...")
 def _load_data():
     conn = db.connect()
     ids, M = load_matrix(conn)
@@ -29,21 +29,21 @@ def _load_data():
     return ids, M, meta.set_index("file_id")
 
 def render():
-    st.header("🔊 Tim kiem theo giong noi — Embedding ECAPA-TDNN (192 chieu)")
+    st.header("🔊 Tìm kiếm theo giọng nói — Embedding ECAPA-TDNN (192 chiều)")
     st.markdown(
-        "Upload 1 file WAV (giong doc moi). He thong trich **speaker embedding** "
-        "bang ECAPA-TDNN roi tim **top-5 file giong nhat** trong CSDL 1000 file."
+        "Tải lên 1 file WAV (giọng đọc mới). Hệ thống trích **speaker embedding** "
+        "bằng ECAPA-TDNN rồi tìm **top 5 file giống nhất** trong CSDL 1.000 file."
     )
 
     ids, M, meta = _load_data()
-    st.caption(f"CSDL: {len(ids)} file | {meta['speaker_id'].nunique()} speaker")
+    st.caption(f"CSDL: {len(ids)} file | {meta['speaker_id'].nunique()} người nói")
 
     # -----------------------------------------------------------------------
     # Upload
     # -----------------------------------------------------------------------
-    uploaded = st.file_uploader("Chon file WAV", type=["wav", "mp3", "m4a", "ogg"])
+    uploaded = st.file_uploader("Chọn file âm thanh", type=["wav", "mp3", "m4a", "ogg"])
     if uploaded is None:
-        st.info("Hay upload 1 file am thanh de bat dau tim kiem.")
+        st.info("Hãy tải lên 1 file âm thanh để bắt đầu tìm kiếm.")
         return
 
     # Luu tam ra disk de preprocess doc duoc
@@ -53,22 +53,22 @@ def render():
         tmp_path = f.name
 
     st.audio(tmp_path, format="audio/wav")
-    st.caption(f"File truy van: `{uploaded.name}`")
+    st.caption(f"File truy vấn: `{uploaded.name}`")
 
-    with st.spinner("Dang trich embedding..."):
+    with st.spinner("Đang trích embedding..."):
         try:
             qvec = extract(tmp_path)
         except Exception as e:
-            st.error(f"Loi trich dac trung: {e}")
+            st.error(f"Lỗi trích đặc trưng: {e}")
             os.unlink(tmp_path)
             return
 
-    st.success(f"Embedding OK: 192 chieu | norm={np.linalg.norm(qvec):.4f}")
+    st.success(f"Embedding hợp lệ: 192 chiều | chuẩn={np.linalg.norm(qvec):.4f}")
 
     # -----------------------------------------------------------------------
     # Tim kiem
     # -----------------------------------------------------------------------
-    k = st.slider("So ket qua tra ve (k)", min_value=1, max_value=10, value=5)
+    k = st.slider("Số kết quả trả về (k)", min_value=1, max_value=10, value=5)
     results = search(qvec, ids, M, k=k)
 
     rows = []
@@ -76,27 +76,27 @@ def render():
         spk = meta.loc[fid, "speaker_id"]  if fid in meta.index else "?"
         reg = meta.loc[fid, "region_accent"] if fid in meta.index else "?"
         lng = meta.loc[fid, "language"]    if fid in meta.index else "?"
-        rows.append({"Hang": rank, "file_id": fid, "speaker_id": spk,
-                     "region": reg, "language": lng,
-                     "similarity": round(sim, 4), "distance": round(dist, 4)})
+        rows.append({"Hạng": rank, "file_id": fid, "speaker_id": spk,
+                     "Vùng/Accent": reg, "Ngôn ngữ": lng,
+                     "Độ tương đồng": round(sim, 4), "Khoảng cách": round(dist, 4)})
 
     df_res = pd.DataFrame(rows)
 
     # -----------------------------------------------------------------------
     # Bang ket qua
     # -----------------------------------------------------------------------
-    st.subheader("Ket qua top-k")
+    st.subheader("Kết quả Top-k")
     st.dataframe(df_res, use_container_width=True)
 
     # -----------------------------------------------------------------------
     # Bieu do bar chart
     # -----------------------------------------------------------------------
     fig, ax = plt.subplots(figsize=(8, 3))
-    bars = ax.barh(df_res["file_id"][::-1], df_res["similarity"][::-1], color="#3498db")
-    ax.set_xlabel("Cosine Similarity [0, 1]")
-    ax.set_title("Top-k similarity")
+    bars = ax.barh(df_res["file_id"][::-1], df_res["Độ tương đồng"][::-1], color="#3498db")
+    ax.set_xlabel("Độ tương đồng Cosine [0, 1]")
+    ax.set_title("Độ tương đồng Top-k")
     ax.set_xlim(0, 1)
-    for bar, val in zip(bars, df_res["similarity"][::-1]):
+    for bar, val in zip(bars, df_res["Độ tương đồng"][::-1]):
         ax.text(bar.get_width() + 0.01, bar.get_y() + bar.get_height()/2,
                 f"{val:.4f}", va="center", fontsize=9)
     plt.tight_layout()
@@ -106,18 +106,18 @@ def render():
     # -----------------------------------------------------------------------
     # Nghe lai tung ket qua (neu co file wav tren disk)
     # -----------------------------------------------------------------------
-    st.subheader("Nghe lai ket qua")
+    st.subheader("Nghe lại kết quả")
     for _, row in df_res.iterrows():
         wav_path = os.path.join("data", "wav", f"{row['file_id']}.wav")
         col1, col2 = st.columns([2, 3])
         with col1:
-            st.markdown(f"**#{row['Hang']} {row['file_id']}**  \n"
-                        f"spk: `{row['speaker_id']}`  region: `{row['region']}`  "
-                        f"sim: `{row['similarity']}`")
+            st.markdown(f"**#{row['Hạng']} {row['file_id']}**  \n"
+                        f"Người nói: `{row['speaker_id']}`  Vùng: `{row['Vùng/Accent']}`  "
+                        f"Điểm: `{row['Độ tương đồng']}`")
         with col2:
             if os.path.exists(wav_path):
                 st.audio(wav_path, format="audio/wav")
             else:
-                st.caption("(File WAV khong co tren disk — giai nen data/wav/ de nghe)")
+                st.caption("(Không tìm thấy file WAV trên đĩa — giải nén data/wav/ để nghe)")
 
     os.unlink(tmp_path)
