@@ -1,0 +1,11 @@
+file,duration_sec,f0_mean,hnr_mean,jitter_local,zcr_mean,rank,prosodic_file_id,prosodic_speaker,prosodic_accent,prosodic_lang,prosodic_sim,prosodic_dist,spectral_file_id,spectral_speaker,spectral_accent,spectral_lang,spectral_sim
+new_B_1.wav,3.62,106.42,10.77,2.759,0.1875,1,A_0348,SPK_p245,UK,en,0.3659,1.7329,A_0175,SPK_MMVP0,US,en,0.7822
+new_B_1.wav,3.62,106.42,10.77,2.759,0.1875,2,A_0480,SPK_p274,UK,en,0.3458,1.8918,A_0285,SPK_MTJU0,US,en,0.7764
+new_B_1.wav,3.62,106.42,10.77,2.759,0.1875,3,A_0558,SPK_p298,UK,en,0.3294,2.0354,A_0293,SPK_MTXS0,US,en,0.7759
+new_B_1.wav,3.62,106.42,10.77,2.759,0.1875,4,A_0557,SPK_p298,UK,en,0.322,2.1055,A_0283,SPK_MTJU0,US,en,0.7686
+new_B_1.wav,3.62,106.42,10.77,2.759,0.1875,5,A_0424,SPK_p259,UK,en,0.3145,2.1797,A_0024,SPK_MBMA1,US,en,0.7656
+new_B_2.wav,4.18,106.37,9.11,2.452,0.2169,1,A_0089,SPK_MESJ0,US,en,0.3126,2.1992,A_0234,SPK_MSDS0,US,en,0.7524
+new_B_2.wav,4.18,106.37,9.11,2.452,0.2169,2,A_0029,SPK_MBMA1,US,en,0.2607,2.8355,A_0057,SPK_MDWH0,US,en,0.7437
+new_B_2.wav,4.18,106.37,9.11,2.452,0.2169,3,A_0190,SPK_MPGR1,US,en,0.2571,2.8897,A_0180,SPK_MMVP0,US,en,0.7343
+new_B_2.wav,4.18,106.37,9.11,2.452,0.2169,4,A_0287,SPK_MTJU0,US,en,0.2562,2.9035,A_0178,SPK_MMVP0,US,en,0.7262
+new_B_2.wav,4.18,106.37,9.11,2.452,0.2169,5,A_0084,SPK_MESJ0,US,en,0.2454,3.0752,A_0176,SPK_MMVP0,US,en,0.7222

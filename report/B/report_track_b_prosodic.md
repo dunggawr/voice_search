@@ -66,6 +66,9 @@ Chạy `track_b_prosodic` với độ đo `mahalanobis` ([eval_track_b_prosodic_
 - Với `seen`, 15/20 truy vấn không đúng Top-1 ở tuyến prosodic đơn lẻ. Phần lớn câu sai rơi vào các clip ngắn (`1.0–1.5s`, ví dụ `Q24 A_0771 = 1.38s`, `Q27 A_0378 = 1.02s`, `Q28 A_0408 = 1.18s`), nơi `jitter`, `shimmer`, `speaking_rate` dao động mạnh, hoặc giữa các speaker có khoảng `f0_mean` chồng lấn (ví dụ giữa các speaker `US` quanh 110–125 Hz).
 - Với `unseen`, 8/10 truy vấn đạt `group@5 >= 0.6`; 2 câu có `group@5 = 0.4` đều là `UK` ngắn (`Q03 A_0368 = 1.22s` nhầm sang `US`, `Q06 A_0582 = 1.34s` nhầm sang `Nam`/`US`) vì giọng `UK` và `US` có phân bố `f0_mean` gần nhau (113 Hz vs 118 Hz).
 - Bảng mẫu chấm nghe thử 10 truy vấn (để cả 3 thành viên điền điểm 1–5) đã tạo tại [t5_listening_eval_template.csv](file:///home/dunggawr/Documents/voice_search_buoc0/voice_search/report/B/t5_listening_eval_template.csv).
+- **Kiểm tra trên 2 file mới ngoài tập 1.000 file** (`new_B_1.wav` = 3.62s, `new_B_2.wav` = 4.18s, đều là giọng nam tiếng Anh nguồn LibriSpeech/SpeechBrain, `f0_mean = 106.4 Hz`, xem [t5_new_recordings_top5.csv](file:///home/dunggawr/Documents/voice_search_buoc0/voice_search/report/B/t5_new_recordings_top5.csv)):
+  - Cả 2 tuyến Prosodic (B) và Spectral (A) đều trả về **5/5 kết quả tiếng Anh** (`en`) đúng ngôn ngữ & dải F0 thấp (`UK`/`US`).
+  - Ở Prosodic, `new_B_1.wav` (`zcr = 0.1875`, `hnr = 10.77 dB`) khớp nhóm `UK/en` (`sim = 0.314–0.366`), còn `new_B_2.wav` (`zcr = 0.2169`, `hnr = 9.11 dB`) bị kéo sang `US/en` (`sim = 0.245–0.313`) — minh hoạ trực tiếp nhận xét ở Bước 0 rằng `zcr` và `hnr` nhạy với kênh thu hơn `f0_mean`.
 
 ---
 
